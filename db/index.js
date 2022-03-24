@@ -43,7 +43,7 @@ class Db {
 
     async addFlower(flowerData) {
         try {
-            return await fireBase.db.add('flowers', flowerData);
+            return await fireBase.db.add('flowers', flowerData.id, flowerData);
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err)

@@ -35,8 +35,8 @@ class FirebaseDB {
         return data;
     }
 
-    async add(collectionName, data) {
-        return await db.collection(collectionName).add(data);
+    async add(collectionName, id, data) {
+        return await db.collection(collectionName).doc(id).set(data);
     }
 }
 
