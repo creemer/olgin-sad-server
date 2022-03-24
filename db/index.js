@@ -26,7 +26,13 @@ class Db {
 
     async getFlowerByCategory(category) {
         try {
-            return await fireBase.db.getByField('flowers', 'category', category);
+            const flowers =  await fireBase.db.getByField('flowers', 'category', category);
+
+            if (!flowers || !flowers.length) {
+                return []
+            } else {
+                return flowers
+            }
         } catch (err) {
             // eslint-disable-next-line no-console
             console.error(err)
