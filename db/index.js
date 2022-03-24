@@ -41,9 +41,19 @@ class Db {
         }
     }
 
-    async addFlower(flowerData) {
+    async addFlower(id, flowerData) {
         try {
-            return await fireBase.db.add('flowers', flowerData.id, flowerData);
+            return await fireBase.db.add('flowers', id, flowerData);
+        } catch (err) {
+            // eslint-disable-next-line no-console
+            console.log(err)
+            return null;
+        }
+    }
+
+    async updateFlower(id, flowerData) {
+        try {
+            return await fireBase.db.setNewValue(flowerData, 'flowers', 'id', id)
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err)
@@ -67,9 +77,9 @@ class Db {
         }
     }
 
-    async saveOrder(order) {
+    async saveOrder(id, order) {
         try {
-            return await fireBase.db.add('orders', order);
+            return await fireBase.db.add('orders', id, order);
         } catch (err) {
             // eslint-disable-next-line no-console
             console.warn(err)

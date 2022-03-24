@@ -5,8 +5,9 @@ const {db} = require('../db/index');
 class OrderController {
     async addOrder(req, res, next) {
         try {
-            const order = await db.saveOrder({
-                id: uuid.v4(),
+            const id = uuid.v4();
+            const order = await db.saveOrder(id, {
+                id,
                 createdAt: Date.now(),
                 ...req.body
             })

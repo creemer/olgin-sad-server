@@ -38,6 +38,20 @@ class FirebaseDB {
     async add(collectionName, id, data) {
         return await db.collection(collectionName).doc(id).set(data);
     }
+
+    async setNewValue(data, collectionName, field, value) {
+
+        // // [START firestore_data_set_field]
+        // const ref = db.collection(collectionName).doc('DC');
+        //
+        // // Set the 'capital' field of the city
+        // const res = await ref.update({capital: true});
+
+
+        const snapshot = await db.collection(collectionName).where(field, '==', value).get();
+
+        snapshot.forEach(async (doc) => await doc.ref.update(data));
+    }
 }
 
 class FirebaseStorage {

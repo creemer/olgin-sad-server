@@ -13,7 +13,7 @@ class FlowerController {
 
             await storage.saveImage(fileName, img.data);
 
-            const flower = await db.addFlower({
+            const flower = await db.addFlower(id, {
                 id, name, price, description, category,
                 img: `https://firebasestorage.googleapis.com/v0/b/olgin-sad.appspot.com/o/${fileName}?alt=media`
             })
@@ -37,6 +37,18 @@ class FlowerController {
         }
 
         return res.json(flowers);
+    }
+
+    async updateFlower(req, res, next) {
+        try {
+            let {name, price, description, category, id} = req.body
+
+            const flower = await db.updateFlower(id, {id, name, price, description, category});
+
+            return res.json(flower)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
+        }
     }
 
     async getOne(req, res) {
