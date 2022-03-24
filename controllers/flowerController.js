@@ -1,21 +1,24 @@
 const uuid = require('uuid')
 const path = require('path');
 const ApiError = require('../error/ApiError');
-const db = require('../db/index');
+const { db, storage } = require('../db/index');
 
 class FlowerController {
     async create(req, res, next) {
         try {
-            let {name, price, description} = req.body
+            let {name, price, description, category} = req.body
             const {img} = req.files
             const id = uuid.v4();
             let fileName = id + ".jpg"
-            img.mv(path.resolve(__dirname, '..', 'static', fileName))
 
-            const flowerData = {id, name, price, description, img: fileName};
-            await db.addFlower(flowerData)
+            await storage.saveImage(fileName, img.data);
 
-            return res.json(flowerData)
+            const flower = await db.addFlower({
+                id, name, price, description, category,
+                img: `https://firebasestorage.googleapis.com/v0/b/olgin-sad.appspot.com/o/${fileName}?alt=media`
+            })
+
+            return res.json(flower)
         } catch (e) {
             next(ApiError.badRequest(e.message))
         }
@@ -32,7 +35,11 @@ class FlowerController {
         const {id} = req.params
         const flower = await db.getFlowerById(id);
 
-        return res.json(flower)
+        if (!flower) {
+            res.status(400).json('Nothing found')
+        }
+
+        return res.json(flower[0])
     }
 }
 

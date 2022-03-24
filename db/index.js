@@ -1,12 +1,10 @@
-const path = require('path');
-const fs = require('fs/promises');
+
+const fireBase = require('./firebase');
 
 class Db {
     async getAllFlowers() {
         try {
-            const data = await fs.readFile(path.join(__dirname, 'flowers.json'), 'utf8');
-
-            return JSON.parse(data.toString());
+            return await fireBase.db.getAll('flowers');
         } catch (err) {
             // eslint-disable-next-line no-console
             console.error(err)
@@ -17,9 +15,7 @@ class Db {
 
     async getFlowerById(id) {
         try {
-            const data = await fs.readFile(path.join(__dirname, 'flowers.json'), 'utf8');
-
-            return JSON.parse(data.toString()).find(flower => flower.id === id);
+            return await fireBase.db.getByField('flowers', 'id', id);
         } catch (err) {
             // eslint-disable-next-line no-console
             console.error(err)
@@ -30,15 +26,7 @@ class Db {
 
     async addFlower(flowerData) {
         try {
-            const data = await fs.readFile(path.join(__dirname, 'flowers.json'), 'utf8');
-            const flowers = JSON.parse(data.toString());
-
-            await fs.writeFile(
-                path.join(__dirname, 'flowers.json'),
-                JSON.stringify([...flowers, flowerData]),
-            )
-
-            return flowerData;
+            return await fireBase.db.add('flowers', flowerData);
         } catch (err) {
             // eslint-disable-next-line no-console
             console.log(err)
@@ -48,10 +36,13 @@ class Db {
 
     async getUserByEmail(email) {
         try {
-            const data = await fs.readFile(path.join(__dirname, 'users.json'), 'utf8');
-            const users = JSON.parse(data.toString());
+            const found = await fireBase.db.getByField('users', 'email', email);
 
-            return users.find((item) => item.email === email);
+            if (found.length) {
+                return found[0];
+            } else {
+                return null;
+            }
         } catch (err) {
             // eslint-disable-next-line no-console
             console.warn(err)
@@ -61,15 +52,7 @@ class Db {
 
     async saveOrder(order) {
         try {
-            const data = await fs.readFile(path.join(__dirname, 'orders.json'), 'utf8');
-            const orders = JSON.parse(data.toString());
-
-            await fs.writeFile(
-                path.join(__dirname, 'orders.json'),
-                JSON.stringify([...orders, order]),
-            )
-
-            return order;
+            return await fireBase.db.add('orders', order);
         } catch (err) {
             // eslint-disable-next-line no-console
             console.warn(err)
@@ -79,9 +62,7 @@ class Db {
 
     async getOrders() {
         try {
-            const data = await fs.readFile(path.join(__dirname, 'orders.json'), 'utf8');
-
-            return JSON.parse(data.toString());
+            return await fireBase.db.getAll('orders');
         } catch (err) {
             // eslint-disable-next-line no-console
             console.error(err)
@@ -91,4 +72,13 @@ class Db {
     }
 }
 
-module.exports = new Db();
+class Storage {
+    async saveImage(name, img) {
+        return await fireBase.storage.save(name, img);
+    }
+}
+
+module.exports = {
+    db: new Db(),
+    storage: new Storage()
+}

@@ -1,6 +1,6 @@
 const uuid = require('uuid')
 const ApiError = require('../error/ApiError');
-const db = require('../db/index');
+const {db} = require('../db/index');
 
 class OrderController {
     async addOrder(req, res, next) {

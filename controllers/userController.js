@@ -1,6 +1,6 @@
 const ApiError = require('../error/ApiError');
 const jwt = require('jsonwebtoken')
-const db = require('../db/index');
+const {db} = require('../db/index');
 
 const generateJwt = (id, email, role) => {
     return jwt.sign(
@@ -19,7 +19,7 @@ class UserController {
             return next(ApiError.internal('Пользователь не найден'))
         }
 
-        if (!user.password === password) {
+        if (user.password !== password) {
             return next(ApiError.internal('Указан неверный пароль'))
         }
 
