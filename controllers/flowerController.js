@@ -25,8 +25,16 @@ class FlowerController {
 
     }
 
-    async getAll(req, res) {
-        const flowers = await db.getAllFlowers();
+    async getFlowers(req, res) {
+        const category = req.query.category;
+
+        let flowers;
+
+        if (!category || category === 'all') {
+            flowers = await db.getAllFlowers();
+        } else {
+            flowers = await db.getFlowerByCategory(category);
+        }
 
         return res.json(flowers);
     }

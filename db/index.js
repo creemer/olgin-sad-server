@@ -24,6 +24,17 @@ class Db {
         }
     }
 
+    async getFlowerByCategory(category) {
+        try {
+            return await fireBase.db.getByField('flowers', 'category', category);
+        } catch (err) {
+            // eslint-disable-next-line no-console
+            console.error(err)
+
+            return []
+        }
+    }
+
     async addFlower(flowerData) {
         try {
             return await fireBase.db.add('flowers', flowerData);
